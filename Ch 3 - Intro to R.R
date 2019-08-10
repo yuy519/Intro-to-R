@@ -14,17 +14,9 @@ x
 # Display type of x in console
 typeof(x)
 
-# Use historical assignment operator
+# Use better assignment operator
 y <- 8
 y
-
-# Use ; to concantenate operations (but not recommended for operational code)
-y <- 9; y
-
-z<- pi/2;z
-typeof(z)
-
-
 
 # How to programmatically clear console
 cat("\014") 
@@ -43,6 +35,7 @@ DateTime <- date()
 DateTime
 typeof(DateTime)
 Date <- Sys.Date()
+Date
 
 # Use as.Date( ) to convert strings to dates
 mydates <- as.Date(c("2007-06-22", "2004-02-13"))
@@ -77,19 +70,34 @@ z6
 # How to programmatically remove all variables from Environment
 rm(list=ls(all=TRUE))
 
-# How to programmatically clear the Console
+# Programmatically clear the Console
 cat("\014")
 
 
-# Vectors in R
+## Vectors in R
+# Character Vectors
+
 name <- c("Mike", "Lucy", "John") 
 name[1]
 name[2:3]
 name[c(1,3)]
 
-age <- c(20, 25, 30) 
+# For checking presence:
+"Lucy" %in% name
+any("Lucy"==name)
+is.element("Lucy", name)
 
-#
+# For finding first occurance:
+match("Lucy", name)
+
+# For finding all occurances as vector of indices:
+which("Lucy" == name)
+
+# For finding all occurances as logical vector:
+  
+"Lucy" == name
+
+# Numeric Vectors and Vector Math
 X <- c(1, 3, 5, 7, 9, 11)
 X*3
 sqrt(X)
@@ -105,6 +113,7 @@ Z2 <- c(0,1,2,3)
 
 X-Z2
 
+lapply()
 
 # Missing Data in R
 Z <- c(2, NA, 6, 8, NA, 12)
@@ -126,12 +135,8 @@ cat("\014")
 # Arrays and Matrices
 
 theArray2d <- array(1:9, dim=c(3,3))
+
 theArray2d[1,2]
-
-View(theArray2d)
-
-theArray2d <- array(1:9, dim=c(3,3), byrow=TRUE)
-# The above is to show that byrow is not valid for arrays
 
 View(theArray2d)
 
@@ -181,20 +186,31 @@ theDF$`Team Strength`
 rm(list=ls(all=TRUE))
 cat("\014") 
 #
+getwd()
 ptm <- proc.time()
-Yellow_Tripdata_2017_06 <- read.csv("C:/RTemp/yellow_tripdata_2017-06-ssd-copy.csv", comment.char="#")
-proc.time() - ptm
-View(Yellow_Tripdata_2017_06)
+Yellow_Tripdata_2017_06 <- read.csv("yellow_tripdata_2017-06.csv", comment.char="#")
+CSV_READ_TIME_SSD <- proc.time() - ptm
+ptm <- proc.time()
+Yellow_Tripdata_2017_06 <- read.csv("D:/temp/yellow_tripdata_2017-06.csv", comment.char="#")
+CSV_READ_TIME_HDD <- proc.time() - ptm
 
+View(Yellow_Tripdata_2017_06)
 head(Yellow_Tripdata_2017_06)
 str(Yellow_Tripdata_2017_06)
 summary(Yellow_Tripdata_2017_06)
 
+summary(Yellow_Tripdata_2017_06 $ trip_distance)
 #
 # Throwing out absurdly long trips
+ptm <- proc.time()
 d2<-Yellow_Tripdata_2017_06[which(Yellow_Tripdata_2017_06$trip_distance<1000),]
 str(d2)
-summary(d2)
+summary(d2 $ trip_distance)
 
 # Let's save our data frame for the next module...
+ptm <- proc.time()
 save(Yellow_Tripdata_2017_06,file="Yellow_Tripdata_2017_06.RData")
+RDATA_WRITE_TIME_SSD <- proc.time() - ptm
+ptm <- proc.time()w
+save(Yellow_Tripdata_2017_06,file="D:/Temp/Yellow_Tripdata_2017_06.RData")
+RDATA_WRITE_TIME_HDD <- proc.time() - ptm
