@@ -113,8 +113,6 @@ Z2 <- c(0,1,2,3)
 
 X-Z2
 
-lapply()
-
 # Missing Data in R
 Z <- c(2, NA, 6, 8, NA, 12)
 is.na(Z)
@@ -132,19 +130,22 @@ apropos('mea')
 rm(list=ls(all=TRUE))
 cat("\014") 
 
-# Arrays and Matrices
+## Arrays and Matrices
 
+# 2-dimensional arrays
 theArray2d <- array(1:9, dim=c(3,3))
 
 theArray2d[1,2]
 
 View(theArray2d)
 
+# 3-dimensional arrays
 theArray3d <- array(1:27, dim=c(3,3,3))
 
 theArray3d[1,2,3]
 View(theArray3d)
 
+# Matrices
 theMatrix <- matrix(1:4, nrow=2)
 View(theMatrix)
 
@@ -185,14 +186,16 @@ theDF$`Team Strength`
 # Clean Up 
 rm(list=ls(all=TRUE))
 cat("\014") 
-#
+
+## Reading in external data
+## Prior to attempting this section, download file
+## "yellow-tripdata_2017-06.csv" from link on intro-to-r.com
+## and store it in working directory for this project
+
 getwd()
 ptm <- proc.time()
 Yellow_Tripdata_2017_06 <- read.csv("yellow_tripdata_2017-06.csv", comment.char="#")
-CSV_READ_TIME_SSD <- proc.time() - ptm
-ptm <- proc.time()
-Yellow_Tripdata_2017_06 <- read.csv("D:/temp/yellow_tripdata_2017-06.csv", comment.char="#")
-CSV_READ_TIME_HDD <- proc.time() - ptm
+CSV_READ_TIME <- proc.time() - ptm
 
 View(Yellow_Tripdata_2017_06)
 head(Yellow_Tripdata_2017_06)
@@ -210,7 +213,4 @@ summary(d2 $ trip_distance)
 # Let's save our data frame for the next module...
 ptm <- proc.time()
 save(Yellow_Tripdata_2017_06,file="Yellow_Tripdata_2017_06.RData")
-RDATA_WRITE_TIME_SSD <- proc.time() - ptm
-ptm <- proc.time()w
-save(Yellow_Tripdata_2017_06,file="D:/Temp/Yellow_Tripdata_2017_06.RData")
-RDATA_WRITE_TIME_HDD <- proc.time() - ptm
+RDATA_WRITE_TIME <- proc.time() - ptm
