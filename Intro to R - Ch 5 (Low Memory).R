@@ -11,7 +11,7 @@ cat("\014")
 
 ## Reading in external data
 ## Prior to attempting this section, download file
-## "yellow-tripdata_2017-06.csv" from the link on intro-to-r.com
+## "Yellow_Sample.csv" from the link on intro-to-r.com
 ## and store it in working directory for this project.
 getwd()
 
@@ -21,12 +21,10 @@ getwd()
 file.edit(".gitignore")
 
 # Importing the file and measuring how long the import takes
-### Run as a block of text to time #########
 ptm <- proc.time()
-DF <- read.csv("yellow_tripdata_2017-06.csv")
+DF <- read.csv("Yellow_Sample.csv")
 CSV_READ_TIME <- (proc.time() - ptm)
 CSV_READ_TIME
-############################################
 
 # Looking at what we got
 class(DF)
@@ -45,14 +43,12 @@ getDTthreads(verbose=TRUE)
 setDTthreads(0)
 getDTthreads()
 
-# Doing a timed read of the same file with fread()
-### Run as a block of text to time #########
+# Doing a timed read of the same file
 ptm <- proc.time()
-DF <- fread("yellow_tripdata_2017-06.csv", header="auto", 
+DF <- fread("Yellow_Sample.csv", header="auto", 
             data.table=FALSE)
 FREAD_READ_TIME <- (proc.time() - ptm)
 FREAD_READ_TIME
-############################################
 
 # Examining what we got
 class(DF)
@@ -61,17 +57,15 @@ str(DF)
 names(DF)
 
 # Bringing in column headers as names and using them to set names
-### Run as a block of text to time #########
 ptm <- proc.time()
-header <- read.table("yellow_tripdata_2017-06.csv", header = TRUE,
+header <- read.table("Yellow_Sample.csv", header = TRUE,
                      sep=",", nrow = 1)
-DF <- fread("yellow_tripdata_2017-06.csv", skip=1, sep=",",
+DF <- fread("Yellow_Sample.csv", skip=1, sep=",",
                   header=FALSE, data.table=FALSE)
 setnames(DF, colnames(header))
 rm(header)
 FREAD_READ_TIME <- (proc.time() - ptm)
 FREAD_READ_TIME
-############################################
 
 # Examining what we got again
 class(DF)
@@ -84,9 +78,9 @@ for(i in 1:getDTthreads()) {
   setDTthreads(i)
   print(getDTthreads())
   ptm <- proc.time()
-  header <- read.table("yellow_tripdata_2017-06.csv", header = TRUE,
+  header <- read.table("Yellow_Sample.csv", header = TRUE,
                        sep=",", nrow = 1)
-  DF <- fread("yellow_tripdata_2017-06.csv", skip=1, sep=",",
+  DF <- fread("Yellow_Sample.csv", skip=1, sep=",",
               header=FALSE, data.table=FALSE,
               showProgress=FALSE)
   setnames(DF, colnames(header))
@@ -103,13 +97,10 @@ if (!require("readr")) install.packages("readr")
 library("readr")
 
 # A timed example of readr::read_csv()
-### Run as a block of text to time #########
 ptm <- proc.time()
-DF <- read_csv("yellow_tripdata_2017-06.csv", col_names=TRUE)
+DF <- read_csv("Yellow_Sample.csv", col_names=TRUE)
 READR_READ_TIME <- (proc.time() - ptm)
 READR_READ_TIME
-############################################
-
 CSV_READ_TIME
 FREAD_READ_TIME
 
@@ -122,9 +113,9 @@ names(DF)
 rm(list=ls(all=TRUE))
 cat("\014")
 
-header <- read.table("yellow_tripdata_2017-06.csv", header = TRUE,
+header <- read.table("Yellow_Sample.csv", header = TRUE,
                      sep=",", nrow = 1)
-Yellow_Tripdata_2017_06 <- fread("yellow_tripdata_2017-06.csv",
+Yellow_Tripdata_2017_06 <- fread("Yellow_Sample.csv",
                                  skip=1, sep=",",header=FALSE,
                                  data.table=FALSE)
 setnames(Yellow_Tripdata_2017_06, colnames(header))
@@ -145,61 +136,19 @@ summary(Yellow_Tripdata_2017_06)
 summary(Yellow_Tripdata_2017_06 $ trip_distance)
 #
 # Throwing out "non-fares"
-Yellow_Tripdata_2017_06 <- Yellow_Tripdata_2017_06[which(
+d2<-Yellow_Tripdata_2017_06[which(
   Yellow_Tripdata_2017_06$fare_amount>=0 & 
   Yellow_Tripdata_2017_06$fare_amount<100000),]
-summary(Yellow_Tripdata_2017_06 $ fare_amount)
+summary(d2 $ fare_amount)
 
 # Constraining passenger_count to = 1 or 2
-Yellow_Tripdata_2017_06<-Yellow_Tripdata_2017_06[which(
+d3<-Yellow_Tripdata_2017_06[which(
   Yellow_Tripdata_2017_06$passenger_count==1 | 
-  Yellow_Tripdata_2017_06$passenger_count==2),]
-summary(Yellow_Tripdata_2017_06 $ passenger_count)
+    Yellow_Tripdata_2017_06$passenger_count==2),]
+summary(d3 $ passenger_count)
 
-# Using data.table:fwrite()to save our curated data as csv:
-fwrite(Yellow_Tripdata_2017_06,"Yellow_Curated.csv")
+# Using data.table:fwrite()to save d3 as csv:
+fwrite(d3,"d3.csv")
 
-# Let's re-read our "original" data set,
-# create a sample subset, and save it
-# for the next chapter.
-
-# First, clear memory and the Console 
-rm(list=ls(all=TRUE))
-cat("\014")
-
-# Re-read the csv:
-header <- read.table("yellow_tripdata_2017-06.csv", header = TRUE,
-                     sep=",", nrow = 1)
-DF <- fread("yellow_tripdata_2017-06.csv",
-                                 skip=1, sep=",",header=FALSE,
-                                 data.table=FALSE)
-setnames(DF, colnames(header))
-rm(header)
-
-# Save the "bad" observations so we can clean them out
-# in the next chapter
-DF2<-DF[which(DF$total_amount<=0 |
-                DF$fare_amount >=100000 |
-                DF$fare_amount < 0 |
-                DF$trip_distance >= 100),]
-# Reform DF with only the "good" observations
-DF<-DF[which(DF$total_amount >0 &
-                DF$fare_amount <100000 &
-                DF$fare_amount >= 0 &
-                DF$trip_distance < 100),]
-
-# Select a random subsample of 1,000,000 rows
-set.seed(10)
-index <- sample(1:nrow(DF), 1000000, replace=FALSE)
-
-# Look at the index to see it's just row numbers
-head(index)
-
-# Copy the row numbers for the sample only into Yellow_Sample
-Yellow_Sample <- DF[index,]
-
-# Concatenate (or "bind") the random sample and the "bad" ones
-Yellow_Sample <- rbind(DF2,Yellow_Sample)
-
-# Save the data frame as an R data file
-save(Yellow_Sample,file="Yellow_Sample.RData")
+# Let's save our "original" data frame for the next module...
+save(Yellow_Tripdata_2017_06,file="Yellow_Tripdata_2017_06.RData")
